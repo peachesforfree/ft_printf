@@ -10,11 +10,13 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = libftprintf
+NAME = libftprintf.a
 
 CC = gcc
 
-FLAGS = -Wall -Werror -Wextra -c
+FLAGS = -Wall -Werror -Wextra -I. -c
+
+HEADER = ft_printf.h
 
 SRCS = ft_printf.c \
 	   ft_isdigit.c \
@@ -27,9 +29,9 @@ SRCS = ft_printf.c \
 OBJS = $(SRCS:.c=.o)
 
 $(NAME):
-	$(CC) $(FLAGS) $(SRCS) -I.
-	ar rc $(NAME).a $(OBJS)
-	ranlib $(NAME).a
+	$(CC) $(FLAGS) $(SRCS)
+	ar rc $(NAME) $(OBJS)
+	ranlib $(NAME)
 
 all: $(NAME)
 	
@@ -38,8 +40,8 @@ test:
 
 clean:
 	rm -f $(OBJS)
-	
+
 fclean: clean
-	rm -f $(NAME).a
+	rm -f $(NAME)
 	
 re:fclean all
