@@ -32,7 +32,7 @@ $(NAME):
 	ranlib $(NAME)
 
 all: $(NAME)
-
+	
 test:
 	gcc -g test.c $(SRCS)
 
