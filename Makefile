@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = libftprintf.a
+NAME = libftprintf
 
 CC = gcc
 
@@ -28,8 +28,8 @@ OBJS = $(SRCS:.c=.o)
 
 $(NAME):
 	$(CC) $(FLAGS) $(SRCS) -I.
-	ar rc $(NAME) $(OBJS)
-	ranlib $(NAME)
+	ar rc $(NAME).a $(OBJS)
+	ranlib $(NAME).a
 
 all: $(NAME)
 	
@@ -40,6 +40,6 @@ clean:
 	rm -f $(OBJS)
 	
 fclean: clean
-	rm -f $(NAME)
+	rm -f $(NAME).a
 	
 re:fclean all
