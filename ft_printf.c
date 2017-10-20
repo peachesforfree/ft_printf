@@ -27,7 +27,7 @@ int					ft_printf(const char *format, ...)
 		print_format_string(format, &flags);		//this prints the format string until the first %
 		check_flags(format, &flags);				//reads the format string for justification flags '. #0-+'
 		check_width_precision(format, &flags);		// This checks for a '.' and or a number.
-		check_length(&format[flags.index], &flags);				//this checks length modifiers h, hh, l, ll, j, z
+		check_length(format, &flags);				//this checks length modifiers h, hh, l, ll, j, z
 		//this checks the conversion indicators (sSpdDioOuUxXcC)
 		if ((flags.data_type = check_conversion(format[flags.index], &flags)))	//if there is a conversion indicator we parse_args()
 			(func_sort[flags.data_type])(&flags, &arg, flags.base);
@@ -99,21 +99,23 @@ void				check_width_precision(const char *format, t_flags *flags) //this handles
 }
 
 void			check_length(const char *format, t_flags *flags)               //sets numeric number code for each length specifier "hh, h, l, ll, j, z"
-{																					// maybe make this a jump table?
+{	
+	char *str;
+	str = (char*)format;																				// maybe make this a jump table?
 	flags->length = 0;
-	while (format[0] == 'h' || format[0] == 'l' || format[0] == 'j' || format[0] == 'z')
+	while (str[flags->index] == 'h' || str[flags->index] == 'l' || str[flags->index] == 'j' || str[flags->index] == 'z')
 	{
-		if (format[0] == 'h' && format[1] == 'h')
+		if (str[flags->index] == 'h' && str[flags->index + 1] == 'h')
 			flags->length = 1;
-		else if (format[0] == 'h' && format[1] != 'h')
+		else if (str[flags->index] == 'h' && str[flags->index + 1] != 'h')
 			flags->length = 2;
-		else if (format[0] == 'l' && format[1] == 'l')
+		else if (str[flags->index] == 'l' && str[flags->index + 1] == 'l')
 			flags->length = 3;
-		else if (format[0] == 'l' && format[1] != 'l')
+		else if (str[flags->index] == 'l' && str[flags->index + 1] != 'l')
 			flags->length = 4;
-		else if (format[0] == 'j')
+		else if (str[flags->index] == 'j')
 			flags->length = 5;
-		else if (format[0] == 'z')
+		else if (str[flags->index] == 'z')
 			flags->length = 6;
 		if (flags->length == 1 || flags->length == 3)
 			flags->index++;

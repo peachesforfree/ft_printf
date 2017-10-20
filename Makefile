@@ -6,7 +6,7 @@
 #    By: sbalcort <sbalcort@student.42.us.org>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/08/31 11:42:23 by sbalcort          #+#    #+#              #
-#    Updated: 2017/10/20 12:15:58 by sbalcort         ###   ########.fr        #
+#    Updated: 2017/10/20 13:55:56 by sbalcort         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = libftprintf.a
 
 CC = gcc
 
-FLAGS = -Wall -Werror -Wextra -I. -c
+FLAGS = -Wall -Werror -Wextra -c
 
 SRCS = ft_printf.c \
 	   ft_isdigit.c \
@@ -27,11 +27,14 @@ SRCS = ft_printf.c \
 OBJS = $(SRCS:.c=.o)
 
 $(NAME):
-	$(CC) $(FLAGS) $(SRCS)
+	$(CC) $(FLAGS) $(SRCS) -I.
 	ar rc $(NAME) $(OBJS)
 	ranlib $(NAME)
 
 all: $(NAME)
+
+test:
+	gcc -g test.c $(SRCS)
 
 clean:
 	rm -f $(OBJS)
