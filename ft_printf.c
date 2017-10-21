@@ -69,8 +69,7 @@ void			check_flags(const char *format, t_flags *flags) // this keeps track of th
 
 int					check_dubs(const char *format, char c, t_flags *flags)          // make this a defines "-+ #0" and a ft_strchr statement when called.
 {
-	while (format[flags->index] == '-' || format[flags->index] == '+' || format[flags->index] == ' ' ||
-		format[flags->index] == '#' || format[flags->index] == '0')
+	while (format[flags->index] == c)
 	{
 		flags->index++;
 		if (format[flags->index] == c)
