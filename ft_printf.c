@@ -145,7 +145,7 @@ int				check_conversion(char format, t_flags *flags) // checks for conversion fl
 	else if (format == 'x' || format == 'X')
 	{
 		flags->base = 16;
-		i = 6;
+		i =6;
 	}
 	else if (format == 'p')
 	{
