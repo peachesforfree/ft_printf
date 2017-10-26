@@ -63,6 +63,22 @@ void		print_format_string(const char *format, t_flags *flags)
 }
 
 /*
+**This is to make sure the flag is accounted forces
+**as well all occurences of the same flag are forwarded past
+*/
+
+int			check_dubs(const char *format, char c, t_flags *flags)
+{
+	while (format[flags->index] == c)
+	{
+		flags->index++;
+		if (format[flags->index] == c)
+			return (0);
+	}
+	return (1);
+}
+
+/*
 **	Handle precision
 **	- justify left
 **	+ places and forces a - + sign
@@ -96,20 +112,4 @@ void		check_flags(const char *format, t_flags *flags)
 			flags->flag += ZERO;
 		flags->index++;
 	}
-}
-
-/*
-**This is to make sure the flag is accounted forces
-**as well all occurences of the same flag are forwarded past
-*/
-
-int			check_dubs(const char *format, char c, t_flags *flags)
-{
-	while (format[flags->index] == c)
-	{
-		flags->index++;
-		if (format[flags->index] == c)
-			return (0);
-	}
-	return (1);
 }
