@@ -26,7 +26,7 @@ SRCS = ft_printf.c \
 	   ft_put_mem.c \
 	   put_numbers.c \
 	   put_strings.c \
-	   type_cast.c \
+	   type_casting.c \
 	   misc_printing.c \
 	   flag_checking.c \
 	   ft_isspace.c
