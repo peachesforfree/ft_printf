@@ -23,7 +23,12 @@ SRCS = ft_printf.c \
 	   ft_putchar.c \
 	   ft_atoi.c \
 	   ft_strlen.c \
-	   ft_putchar_fd.c \
+	   ft_put_mem.c \
+	   put_numbers.c \
+	   put_strings.c \
+	   type_cast.c \
+	   misc_printing.c \
+	   flag_checking.c \
 	   ft_isspace.c
 
 OBJS = $(SRCS:.c=.o)
