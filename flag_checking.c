@@ -103,6 +103,6 @@ int				check_conversion(char format, t_flags *flags)
 		i = 8;
 	}
 	flags->caps = (format >= 'A' && format <= 'Z') ? true : false;
-    set_base(format, flags)
+    set_base(format, flags);
 	return (i);
 }
