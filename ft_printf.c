@@ -7,14 +7,14 @@
 
 void				(*g_func_sort[127]) (t_flags *flags, va_list *arg, int base) =
 {
-	[1] = print_char,
-	[2] = print_signed,
-	[3] = print_unsigned,
-	[4] = print_string,
-	[5] = print_unsigned,
-	[6] = print_unsigned,
-	[7] = print_unsigned,
-	[8] = print_char
+	print_char,
+	print_signed,
+	print_unsigned,
+	print_string,
+	print_unsigned,
+	print_unsigned,
+	print_unsigned,
+	print_char
 };
 
 /*
@@ -41,8 +41,8 @@ int			ft_printf(const char *format, ...)
 		check_flags(format, &flags);
 		check_width_precision(format, &flags);
 		check_length(format, &flags);
-		if (flags.data_type = check_conversion(format[flags.index], &flags))
-			(g_func_sort[flags.data_type])(&flags, &arg, flags.base);
+		if ((flags.data_type = check_conversion(format[flags.index], &flags)))
+			g_func_sort[flags.data_type](&flags, &arg, flags.base);
 		if (format[flags.index])
 			flags.index++;
 	}

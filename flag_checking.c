@@ -78,7 +78,7 @@ void        set_base(char format, t_flags *flags)
 **	then sets number code which isused in dispatch table
 */
 
-int				check_conversion(char format, t_flags *flags)
+int		check_conversion(char format, t_flags *flags)
 {
 	int i;
 
