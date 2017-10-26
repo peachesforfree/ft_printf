@@ -36,7 +36,7 @@ $(NAME):
 all: $(NAME)
 	
 test:
-	gcc -g test.c $(SRCS)
+	gcc -g derps.c $(SRCS)
 
 clean:
 	rm -f $(OBJS)

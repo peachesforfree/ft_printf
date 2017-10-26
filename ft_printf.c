@@ -1,7 +1,6 @@
 #include "ft_printf.h"
 
-
-void			(*func_sort[127])(t_flags *flags, va_list *arg, int base) =
+void				(*g_func_sort[127]) (t_flags *flags, va_list *arg, int base) =
 {
 	[1] = print_char,
 	[2] = print_signed,
@@ -13,8 +12,17 @@ void			(*func_sort[127])(t_flags *flags, va_list *arg, int base) =
 	[8] = print_char
 };
 
+/*
+**	This is ft_printf, dont confuse this with printf.
+**	This function first runs through the format string and prints it
+**	Once % appears it will check for . #0-+ flags
+**	Checks for '.' and a number, looking for width precision
+**	Checks for h, hh, l, ll, j, z  length specifiers
+**	checks for sSpdDioOuUxXcC for incoming datatype
+**		result is input to dispatch table for pulling & printing the variable
+*/
 
-int					ft_printf(const char *format, ...)
+int			ft_printf(const char *format, ...)
 {
 	t_flags flags;
 	va_list arg;
@@ -24,50 +32,73 @@ int					ft_printf(const char *format, ...)
 	flags.index = 0;
 	while (format[flags.index])
 	{
-		print_format_string(format, &flags);		//this prints the format string until the first %
-		check_flags(format, &flags);				//reads the format string for justification flags '. #0-+'
-		check_width_precision(format, &flags);		// This checks for a '.' and or a number.
-		check_length(format, &flags);				//this checks length modifiers h, hh, l, ll, j, z
-		//this checks the conversion indicators (sSpdDioOuUxXcC)
-		if ((flags.data_type = check_conversion(format[flags.index], &flags)))	//if there is a conversion indicator we parse_args()
-			(func_sort[flags.data_type])(&flags, &arg, flags.base);
-			//parse_args(&flags, &arg, conv);						// this parses the va_list for the data we need
-		if (format[flags.index])										//if still existing, iterate again to finish off the format string
+		print_format_string(format, &flags);
+		check_flags(format, &flags);
+		check_width_precision(format, &flags);
+		check_length(format, &flags);
+		if (flags.data_type = check_conversion(format[flags.index], &flags))
+			(g_func_sort[flags.data_type])(&flags, &arg, flags.base);
+		if (format[flags.index])
 			flags.index++;
 	}
-	va_end(arg);											//va_list must be closed
-	return (flags.written_chars);							// return number of chars printed
+	va_end(arg);
+	return (flags.written_chars);
 }
 
-void		print_format_string(const char *format, t_flags *flags)	// this will print the format string up to '%'
+/*
+** Prints formats string leading up to & handles %%
+*/
+
+void		print_format_string(const char *format, t_flags *flags)
 {
 	while (format[flags->index] != '%' && format[flags->index])
 		ft_putchar_mem(flags, format[flags->index++]);
-	if (format[flags->index] && format[flags->index] == '%')							//in the event we have %% a single % is printed, ther first % is an escape char
+	if (format[flags->index] && format[flags->index] == '%')
 		flags->index++;
 }
 
-void			check_flags(const char *format, t_flags *flags) // this keeps track of the justification flags
+/*
+** This reads format string for - + # 0
+** keeps track with binary descriptors
+*/
+
+void			check_flags(const char *format, t_flags *flags)
 {
 	flags->flag = 0b0000000;
-	while (format[flags->index] == '-' || format[flags->index] == '+' || format[flags->index] == ' ' ||
-		format[flags->index] == '#' || format[flags->index] == '0')
+	while (format[flags->index] == '-' || format[flags->index] == '+'
+			|| format[flags->index] == ' ' || format[flags->index] == '#'
+			|| format[flags->index] == '0')
 	{
-		if (format[flags->index] == '-' && check_dubs(&format[flags->index], '-', flags))                  // keeping track of flag with binary descriptors.
-			flags->flag += 0b00000001;
-		else if (format[flags->index] == '+' && check_dubs(&format[flags->index], '+', flags))
-			flags->flag += 0b00000010;
-		else if (format[flags->index] == ' ' && check_dubs(&format[flags->index], ' ', flags))
-			flags->flag += 0b00000100;
-		else if (format[flags->index] == '#' && check_dubs(&format[flags->index], '#', flags))
-			flags->flag += 0b00001000;
-		else if (format[flags->index] == '0' && check_dubs(&format[flags->index], '0', flags))
-			flags->flag += 0b00010000;
+		if (format[flags->index] == '-' &&
+				check_dubs(&format[flags->index], '-', flags))
+			flags->flag += MINUS;
+		else if (format[flags->index] == '+' &&
+				check_dubs(&format[flags->index], '+', flags))
+			flags->flag += PLUS;
+		else if (format[flags->index] == ' ' &&
+				check_dubs(&format[flags->index], ' ', flags))
+			flags->flag += SPACE;
+		else if (format[flags->index] == '#'
+				&& check_dubs(&format[flags->index], '#', flags))
+			flags->flag += HASH;
+		else if (format[flags->index] == '0' &&
+				check_dubs(&format[flags->index], '0', flags))
+			flags->flag += ZERO;
 		flags->index++;
 	}
 }
 
-int					check_dubs(const char *format, char c, t_flags *flags)          // make this a defines "-+ #0" and a ft_strchr statement when called.
+/*
+**	Handle precision
+**	- justify left
+**	+ places and forces a - + sign
+**	' ' blank space padding
+**	# with types oxX will place 0x infront
+**	0 left padds number with zeros
+**	for precision
+*/
+
+int					check_dubs(const char *format, char c, t_flags *flags)
 {
 	while (format[flags->index] == c)
 	{
@@ -78,31 +109,42 @@ int					check_dubs(const char *format, char c, t_flags *flags)          // make 
 	return (1);
 }
 
-void				check_width_precision(const char *format, t_flags *flags) //this handles '.' precision and numberic width
+/*
+**	This handles the '.' precision and following number for precision
+*/
+
+void				check_width_precision(const char *format, t_flags *flags)
 {
 	flags->width = 0;
 	flags->precision = -1;
-	if (ft_isdigit(format[flags->index]))												// here width is handled
+	if (ft_isdigit(format[flags->index]))
 		flags->width = ft_atoi(&format[flags->index]);
-	while (flags->width != 0 && ft_isdigit(format[flags->index]))						//this skips through the numbers that set width
+	while (flags->width != 0 && ft_isdigit(format[flags->index]))
 		flags->index++;
-	if (format[flags->index] == '.')															//handle precision 
+	if (format[flags->index] == '.')
 	{
 		flags->precision = 0;
 		flags->index++;
 	}
-	if (ft_isdigit(format[flags->index]))												//reading the number for precision
+	if (ft_isdigit(format[flags->index]))
 		flags->precision = ft_atoi(&format[flags->index]);
-	while (flags->precision != -1 && ft_isdigit(format[flags->index]))					//forwards thru the numbers in format string
-		flags->index++;													//returns the new place in format string
+	while (flags->precision != -1 && ft_isdigit(format[flags->index]))
+		flags->index++;
 }
 
-void			check_length(const char *format, t_flags *flags)               //sets numeric number code for each length specifier "hh, h, l, ll, j, z"
-{	
+/*
+**	sets numeric number code for each
+**	length specifier "hh, h, l, ll, j, z"
+*/
+
+void			check_length(const char *format, t_flags *flags)
+{
 	char *str;
-	str = (char*)format;																				// maybe make this a jump table?
+
+	str = (char*)format;
 	flags->length = 0;
-	while (str[flags->index] == 'h' || str[flags->index] == 'l' || str[flags->index] == 'j' || str[flags->index] == 'z')
+	while (str[flags->index] == 'h' || str[flags->index] == 'l' ||
+			str[flags->index] == 'j' || str[flags->index] == 'z')
 	{
 		if (str[flags->index] == 'h' && str[flags->index + 1] == 'h')
 			flags->length = 1;
@@ -123,10 +165,16 @@ void			check_length(const char *format, t_flags *flags)               //sets num
 	}
 }
 
-int				check_conversion(char format, t_flags *flags) // checks for conversion flag "sSpdDioOuUxXcC" then sets number code for each one
-{ 
+/*
+**	checks for conversion flag "sSpdDioOuUxXcC"
+**	then sets number code for each one
+*/
+
+int				check_conversion(char format, t_flags *flags)
+{
 	int i;
-	flags->base = 10;                                       // maybe this can be made into a jump table ?
+
+	flags->base = 10;
 	i = 0;
 	if (format == 'c' || format == 'C')
 		i = 1;
@@ -144,7 +192,7 @@ int				check_conversion(char format, t_flags *flags) // checks for conversion fl
 	else if (format == 'x' || format == 'X')
 	{
 		flags->base = 16;
-		i =6;
+		i = 6;
 	}
 	else if (format == 'p')
 	{
@@ -188,30 +236,13 @@ void			print_unsigned(t_flags *flags, va_list *arg, int base)
 	while (flags->flag & MINUS && spaces-- > 0)
 		ft_putchar_mem(flags, ' ');
 }
-/*
-void				parse_args(t_flags *flags, va_list *arg, int conv)	// reads conversion flag and sends it to proper va_list function
-{																// make this a jump table print_char(flags,arg, 0) for uniformity
-	if (conv == 1 || conv == 8)
-		print_char(flags, arg);
-	else if (conv == 2)
-		print_signed(flags, arg, 10);
-	else if (conv == 3)
-		print_unsigned(flags, arg, 8);
-	else if (conv == 4)
-		print_string(flags, arg);
-	else if (conv == 6 || conv == 7)
-		print_unsigned(flags, arg, 16);
-	else if (conv == 5)
-		print_unsigned(flags, arg, 10);
-}
-*/
 
 /*
-Below
-all conversions are made from va_list
+**Below
+**all conversions are made from va_list
 */
 
-void			print_char(t_flags *flags, va_list *arg, int base)			//prints chars
+void			print_char(t_flags *flags, va_list *arg, int base)
 {
 	char	c;
 	char	buffer;
@@ -286,10 +317,8 @@ void			print_string(t_flags *flags, va_list *arg, int base)
 }
 
 /*
-
-Sub functions to assist with conversion functions
-this is also for printing out stuff from argv()
-
+**Sub functions to assist with conversion functions
+**this is also for printing out stuff from argv()
 */
 
 void			ft_putchar_mem(t_flags *flags, char c)
@@ -338,7 +367,8 @@ void			ft_putunbr_mem(t_flags *flags, uintmax_t nbr, int base)
 	}
 	while (nbr == 0 && power > 0)
 	{
-		if (flags->precision != 0 || (flags->flag & HASH && flags->data_type == 3))
+		if (flags->precision != 0 || (flags->flag & HASH
+					&& flags->data_type == 3))
 			ft_putchar_mem(flags, '0');
 		power = power / base;
 	}
@@ -359,7 +389,7 @@ intmax_t			typecast_num(t_flags *flags, intmax_t nbr)
 	return (nbr);
 }
 
-uintmax_t			typecast_unum(t_flags *flags, uintmax_t nbr)
+uintmax_t		typecast_unum(t_flags *flags, uintmax_t nbr)
 {
 	if (flags->data_type == 7)
 		return (nbr);
@@ -375,7 +405,6 @@ uintmax_t			typecast_unum(t_flags *flags, uintmax_t nbr)
 		nbr = (size_t)nbr;
 	return (nbr);
 }
-
 
 int				zeroes_signed(t_flags *flags, intmax_t nbr, int base)
 {
@@ -403,7 +432,8 @@ int				zeroes_unsigned(t_flags *flags, uintmax_t nbr, int base)
 	else if (flags->flag & ZERO && flags->width > 0 && !(flags->flag & MINUS))
 	{
 		zeroes = flags->width - ft_numlen_ull(nbr, base);
-		if ((flags->flag & HASH && flags->data_type == 6) || flags->data_type == 7)
+		if ((flags->flag & HASH && flags->data_type == 6)
+				|| flags->data_type == 7)
 			zeroes = zeroes - 2;
 		else if (flags->flag & HASH && flags->data_type == 3)
 			zeroes--;
@@ -411,8 +441,7 @@ int				zeroes_unsigned(t_flags *flags, uintmax_t nbr, int base)
 	return (zeroes);
 }
 
-
-int						ft_numlen_ull(uintmax_t value, unsigned int base)
+int			ft_numlen_ull(uintmax_t value, unsigned int base)
 {
 	int		len;
 
@@ -425,7 +454,7 @@ int						ft_numlen_ull(uintmax_t value, unsigned int base)
 	return (len);
 }
 
-int						ft_numlen_ll(intmax_t value, int base)
+int			ft_numlen_ll(intmax_t value, int base)
 {
 	int		len;
 
@@ -438,7 +467,7 @@ int						ft_numlen_ll(intmax_t value, int base)
 	return (len);
 }
 
-intmax_t				ft_power_ll(intmax_t nbr, intmax_t power)
+intmax_t	ft_power_ll(intmax_t nbr, intmax_t power)
 {
 	intmax_t	tmp_nbr;
 
@@ -450,7 +479,7 @@ intmax_t				ft_power_ll(intmax_t nbr, intmax_t power)
 	return (nbr);
 }
 
-uintmax_t					ft_power_ull(uintmax_t nbr, uintmax_t power)
+uintmax_t	ft_power_ull(uintmax_t nbr, uintmax_t power)
 {
 	uintmax_t tmp_nbr;
 
@@ -462,7 +491,7 @@ uintmax_t					ft_power_ull(uintmax_t nbr, uintmax_t power)
 	return (nbr);
 }
 
-void			print_sign(t_flags *flags, intmax_t nbr)
+void		print_sign(t_flags *flags, intmax_t nbr)
 {
 	if (nbr < 0)
 	{
@@ -481,11 +510,12 @@ void			print_sign(t_flags *flags, intmax_t nbr)
 	}
 }
 
-void			print_prefix(t_flags *flags, uintmax_t nbr)
+void		print_prefix(t_flags *flags, uintmax_t nbr)
 {
 	if ((flags->flag & HASH && nbr != 0) || flags->data_type == 7)
 	{
-		if (flags->data_type == 3 || flags->data_type == 6 || flags->data_type == 7)
+		if (flags->data_type == 3 || flags->data_type == 6
+				|| flags->data_type == 7)
 			ft_putchar_mem(flags, '0');
 		if (flags->data_type == 6 || flags->data_type == 7)
 			(flags->caps == true) ?

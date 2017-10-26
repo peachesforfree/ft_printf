@@ -24,6 +24,7 @@ typedef	struct		s_flags
 	int				written_chars;		//The number of written total written_chars
 	int				index;
 	int				base;
+	int				fd;
 }					t_flags;
 
 int					ft_printf(const char *format, ...);
