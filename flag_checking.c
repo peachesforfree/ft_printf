@@ -22,7 +22,6 @@ void				check_width_precision(const char *format, t_flags *flags)
 	while (flags->precision != -1 && ft_isdigit(format[flags->index]))
 		flags->index++;
 }
-#include "ft_printf.c"
 
 /*
 **	sets numeric number code for each
