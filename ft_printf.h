@@ -30,7 +30,7 @@ typedef	struct		s_flags
 int		ft_printf(const char *format, ...);
 void	print_format_string(const char *format, t_flags *flags);
 void	check_flags(const char *format, t_flags *flags);
-int		check_dubs(char *format, char c, t_flags *flags);
+int		check_dubs(const char *format, char c, t_flags *flags);
 void	check_width_precision(const char *format, t_flags *flags);
 void	check_length(const char *format, t_flags *flags);
 int		check_conversion(char format, t_flags *flags);

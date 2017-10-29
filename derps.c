@@ -2,7 +2,7 @@
 
 int main(void)
 {
-	ft_printf("%      i", 42);
+	ft_printf("% ++d", 42);
 	write(1, "\n", 1);
 	return (0);
 }

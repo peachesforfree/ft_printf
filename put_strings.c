@@ -34,14 +34,14 @@ void			print_signed(t_flags *flags, va_list *arg, int base)
 		spaces++;
 	if (nbr < 0 || flags->flag & PLUS || flags->flag & SPACE)
 		spaces--;
-	while (!(flags->flag & MINUS) && spaces-- > 0)
+	while (!(flags->flag & MINUS) && (spaces-- > 0))
 		ft_putchar_mem(flags, ' ');
 	print_sign(flags, nbr);
 	while (zeroes-- > 0)
 		ft_putchar_mem(flags, '0');
 	(flags->data_type == 8) ? ft_putchar_mem(flags, nbr) :
 		ft_putnbr_mem(flags, nbr, base);
-	while (flags->flag & MINUS && spaces-- > 0)
+	while (flags->flag & MINUS && (spaces-- > 0))
 		ft_putchar_mem(flags, ' ');
 }
 

@@ -63,16 +63,19 @@ void		print_format_string(const char *format, t_flags *flags)
 }
 
 /*
-**This is to make sure the flag is accounted forces
-**as well all occurences of the same flag are forwarded past
+**If flag repeats in any order of the -+ 0#
+**skip and count on later iteration
 */
 
-int			check_dubs(char *format, char c, t_flags *flags)
+int			check_dubs(const char *format, char c, t_flags *flags)
 {
-	while(format[flags->index] == c)
+	int i;
+	i = flags->index;
+	while (format[i] == '-' || format[i] == '+' || format[i] == ' ' ||
+	format[i] == '#' || format[i] == '0')
 	{
-		flags->index++;
-		if (format[flags->index] != c)
+		i ++;
+		if (format[i] == c)
 			return (0);
 	}
 	return (1);
@@ -96,19 +99,19 @@ void		check_flags(const char *format, t_flags *flags)
 			|| format[flags->index] == '0')
 	{
 		if (format[flags->index] == '-' &&
-				check_dubs((char*)&format, '-', flags))
+				check_dubs(format, '-', flags))
 			flags->flag += MINUS;
 		else if (format[flags->index] == '+' &&
-				check_dubs((char*)&format, '+', flags))
+				check_dubs(format, '+', flags))
 			flags->flag += PLUS;
 		else if (format[flags->index] == ' ' &&
-				check_dubs((char*)&format, ' ', flags))
+				check_dubs(format, ' ', flags))
 			flags->flag += SPACE;
 		else if (format[flags->index] == '#'
-				&& check_dubs((char*)&format, '#', flags))
+				&& check_dubs(format, '#', flags))
 			flags->flag += HASH;
 		else if (format[flags->index] == '0' &&
-				check_dubs((char*)&format, '0', flags))
+				check_dubs(format, '0', flags))
 			flags->flag += ZERO;
 		flags->index++;
 	}
