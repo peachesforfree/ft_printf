@@ -6,11 +6,11 @@
 # include <stdbool.h>
 # include <stdint.h>
 
-# define MINUS				0b1
-# define PLUS				0b10
-# define SPACE				0b100
-# define HASH				0b1000
-# define ZERO				0b10000
+# define MINUS				0b00000001
+# define PLUS				0b00000010
+# define SPACE				0b00000100
+# define HASH				0b00001000
+# define ZERO				0b00010000
 
 typedef	struct		s_flags
 {
@@ -30,7 +30,7 @@ typedef	struct		s_flags
 int		ft_printf(const char *format, ...);
 void	print_format_string(const char *format, t_flags *flags);
 void	check_flags(const char *format, t_flags *flags);
-int		check_dubs(const char *format, char c, t_flags *flags);
+int		check_dubs(char *format, char c, t_flags *flags);
 void	check_width_precision(const char *format, t_flags *flags);
 void	check_length(const char *format, t_flags *flags);
 int		check_conversion(char format, t_flags *flags);

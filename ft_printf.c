@@ -30,7 +30,7 @@ void				(*g_func_sort[127]) (t_flags *flags, va_list *arg, int base) =
 int			ft_printf(const char *format, ...)
 {
 	t_flags flags;
-	va_list arg;
+	va_list arg;           
 
 	va_start(arg, format);
 	flags.written_chars = 0;
@@ -67,12 +67,12 @@ void		print_format_string(const char *format, t_flags *flags)
 **as well all occurences of the same flag are forwarded past
 */
 
-int			check_dubs(const char *format, char c, t_flags *flags)
+int			check_dubs(char *format, char c, t_flags *flags)
 {
-	while (format[flags->index] == c)
+	while(format[flags->index] == c)
 	{
 		flags->index++;
-		if (format[flags->index] == c)
+		if (format[flags->index] != c)
 			return (0);
 	}
 	return (1);
@@ -96,19 +96,19 @@ void		check_flags(const char *format, t_flags *flags)
 			|| format[flags->index] == '0')
 	{
 		if (format[flags->index] == '-' &&
-				check_dubs(&format[flags->index], '-', flags))
+				check_dubs((char*)&format, '-', flags))
 			flags->flag += MINUS;
 		else if (format[flags->index] == '+' &&
-				check_dubs(&format[flags->index], '+', flags))
+				check_dubs((char*)&format, '+', flags))
 			flags->flag += PLUS;
 		else if (format[flags->index] == ' ' &&
-				check_dubs(&format[flags->index], ' ', flags))
+				check_dubs((char*)&format, ' ', flags))
 			flags->flag += SPACE;
 		else if (format[flags->index] == '#'
-				&& check_dubs(&format[flags->index], '#', flags))
+				&& check_dubs((char*)&format, '#', flags))
 			flags->flag += HASH;
 		else if (format[flags->index] == '0' &&
-				check_dubs(&format[flags->index], '0', flags))
+				check_dubs((char*)&format, '0', flags))
 			flags->flag += ZERO;
 		flags->index++;
 	}
