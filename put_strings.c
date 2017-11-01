@@ -1,4 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   put_strings.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sbalcort <sbalcort@student.42.us.org>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/10/31 19:39:51 by sbalcort          #+#    #+#             */
+/*   Updated: 2017/10/31 19:40:34 by sbalcort         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
+
+/*
+**Print_char cC
+**First checks for left padding
+**pulls va_lst
+**depending on justification prints
+**char before or after padding
+*/
 
 void			print_char(t_flags *flags, va_list *arg, int base)
 {
@@ -18,6 +38,13 @@ void			print_char(t_flags *flags, va_list *arg, int base)
 	if (!(flags->flag & MINUS))
 		ft_putchar_mem(flags, c);
 }
+
+/*
+**Prints signed numbers idD
+**given leading zeroes and spaces
+**pulls edgecases and prints learding spaces, zeros
+**number and if left justified, prints spaces.
+*/
 
 void			print_signed(t_flags *flags, va_list *arg, int base)
 {
@@ -44,6 +71,10 @@ void			print_signed(t_flags *flags, va_list *arg, int base)
 	while (flags->flag & MINUS && (spaces-- > 0))
 		ft_putchar_mem(flags, ' ');
 }
+
+/*
+**Prints out string given char ptr
+*/
 
 void			print_string(t_flags *flags, va_list *arg, int base)
 {

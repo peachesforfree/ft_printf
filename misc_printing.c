@@ -1,4 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   misc_printing.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sbalcort <sbalcort@student.42.us.org>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/10/31 19:42:02 by sbalcort          #+#    #+#             */
+/*   Updated: 2017/10/31 19:44:22 by sbalcort         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
+
+/*
+**print_unsigned
+**pulls from va_arg then type casts.
+**accounts for exceptions
+**prints leading spaces, zeroes, number then space again.
+*/
 
 void			print_unsigned(t_flags *flags, va_list *arg, int base)
 {
@@ -11,7 +30,7 @@ void			print_unsigned(t_flags *flags, va_list *arg, int base)
 	nbr = typecast_unum(flags, nbr);
 	zeroes = zeroes_unsigned(flags, nbr, base);
 	spaces = flags->width - ft_numlen_ull(nbr, base) - zeroes;
-	if (flags->flag & 1000 && flags->data_type == 3)
+	if (flags->flag & HASH && flags->data_type == 3)
 		zeroes--;
 	if (nbr == 0 && flags->precision == 0)
 		spaces++;
@@ -29,9 +48,17 @@ void			print_unsigned(t_flags *flags, va_list *arg, int base)
 		ft_putchar_mem(flags, ' ');
 }
 
+/*
+**zeroes_signed && zeroes_unsigned
+**determines leading width from precisison
+**else uses width instead
+**(unsigned) makes exeption for HASH or # for 0x prefix
+**returns number of 0s for padding
+*/
+
 int				zeroes_signed(t_flags *flags, intmax_t nbr, int base)
 {
-	int zeroes;
+	int			zeroes;
 
 	zeroes = 0;
 	if (flags->precision >= ft_numlen_ll(nbr, base))
@@ -47,7 +74,7 @@ int				zeroes_signed(t_flags *flags, intmax_t nbr, int base)
 
 int				zeroes_unsigned(t_flags *flags, uintmax_t nbr, int base)
 {
-	int zeroes;
+	int			zeroes;
 
 	zeroes = 0;
 	if (flags->precision >= ft_numlen_ull(nbr, base))
@@ -64,7 +91,12 @@ int				zeroes_unsigned(t_flags *flags, uintmax_t nbr, int base)
 	return (zeroes);
 }
 
-void		print_prefix(t_flags *flags, uintmax_t nbr)
+/*
+**print_prefix
+**given oOxXp and HASH prints leading 0x or 0X
+*/
+
+void			print_prefix(t_flags *flags, uintmax_t nbr)
 {
 	if ((flags->flag & HASH && nbr != 0) || flags->data_type == 7)
 	{

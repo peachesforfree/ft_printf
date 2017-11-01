@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   put_numbers.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sbalcort <sbalcort@student.42.us.org>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/11/01 16:39:42 by sbalcort          #+#    #+#             */
+/*   Updated: 2017/11/01 16:44:25 by sbalcort         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
 /*
@@ -20,7 +32,7 @@ int			ft_numlen_ull(uintmax_t value, unsigned int base)
 
 /*
 **From long long (intmax_t) and base given
-**Returns number of digits to print  
+**Returns number of digits to print
 */
 
 int			ft_numlen_ll(intmax_t value, int base)
@@ -38,6 +50,7 @@ int			ft_numlen_ll(intmax_t value, int base)
 
 /*
 **From long long (intmax_t) and power
+**Return nbr^(power)
 */
 
 intmax_t	ft_power_ll(intmax_t nbr, intmax_t power)
@@ -53,7 +66,8 @@ intmax_t	ft_power_ll(intmax_t nbr, intmax_t power)
 }
 
 /*
-**
+**From unsigned int max and power
+**Return nbr^(power)
 */
 
 uintmax_t	ft_power_ull(uintmax_t nbr, uintmax_t power)
@@ -69,24 +83,16 @@ uintmax_t	ft_power_ull(uintmax_t nbr, uintmax_t power)
 }
 
 /*
-**
+**From struct flags and int max nbr
+**Prints out leading char from - + ' '
 */
 
 void		print_sign(t_flags *flags, intmax_t nbr)
 {
 	if (nbr < 0)
-	{
-		ft_putchar('-');
-		flags->written_chars++;
-	}
+		ft_putchar_mem(flags, '-');
 	else if (flags->flag & PLUS && nbr >= 0)
-	{
-		ft_putchar('+');
-		flags->written_chars++;
-	}
+		ft_putchar_mem(flags, '+');
 	else if (!(flags->flag & PLUS) && flags->flag & SPACE && nbr >= 0)
-	{
-		ft_putchar(' ');
-		flags->written_chars++;
-	}
+		ft_putchar_mem(flags, ' ');
 }

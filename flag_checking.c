@@ -1,10 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   flag_checking.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sbalcort <sbalcort@student.42.us.org>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/10/29 13:26:29 by sbalcort          #+#    #+#             */
+/*   Updated: 2017/11/01 16:46:00 by sbalcort         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
 /*
+**	sets width from number, if no nbr checks for precision
 **	This handles the '.' precision and following number for width precision
 */
 
-void				check_width_precision(const char *format, t_flags *flags)
+void		check_width_precision(const char *format, t_flags *flags)
 {
 	flags->width = 0;
 	flags->precision = -1;
@@ -25,10 +38,13 @@ void				check_width_precision(const char *format, t_flags *flags)
 
 /*
 **	sets numeric number code for each
-**	length specifier "hh, h, l, ll, j, z"
+**	length specifier
+**	h = 2 hh = 1
+**	l = 4 ll = 3
+**	j = h z = 6
 */
 
-void			check_length(const char *format, t_flags *flags)
+void		check_length(const char *format, t_flags *flags)
 {
 	char *str;
 
@@ -57,19 +73,19 @@ void			check_length(const char *format, t_flags *flags)
 }
 
 /*
-**Unless of conversion oOxXp 
+**Unless of conversion oOxXp
 **base is automatically set for 10
 */
 
-void        set_base(char format, t_flags *flags)
+void		set_base(char format, t_flags *flags)
 {
-    flags->base = 10;
-    if (format == 'o' || format == 'O')
-        flags->base = 8;
-    if (format == 'x' || format == 'X')
-        flags->base = 16;
-    if (format == 'p')
-        flags->base = 16;
+	flags->base = 10;
+	if (format == 'o' || format == 'O')
+		flags->base = 8;
+	if (format == 'x' || format == 'X')
+		flags->base = 16;
+	if (format == 'p')
+		flags->base = 16;
 }
 
 /*
@@ -77,7 +93,7 @@ void        set_base(char format, t_flags *flags)
 **	then sets number code which isused in dispatch table
 */
 
-int		check_conversion(char format, t_flags *flags)
+int			check_conversion(char format, t_flags *flags)
 {
 	int i;
 
@@ -102,6 +118,6 @@ int		check_conversion(char format, t_flags *flags)
 		i = 8;
 	}
 	flags->caps = (format >= 'A' && format <= 'Z') ? true : false;
-    set_base(format, flags);
+	set_base(format, flags);
 	return (i);
 }

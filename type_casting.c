@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   type_casting.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sbalcort <sbalcort@student.42.us.org>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/10/31 19:39:23 by sbalcort          #+#    #+#             */
+/*   Updated: 2017/10/31 19:41:04 by sbalcort         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
 /*
@@ -5,7 +17,7 @@
 **down to what it needs to be. signed and unsigned
 */
 
-intmax_t			typecast_num(t_flags *flags, intmax_t nbr)
+intmax_t		typecast_num(t_flags *flags, intmax_t nbr)
 {
 	if (flags->length == 4 || (flags->caps == true && flags->data_type == 2))
 		nbr = (long int)nbr;
